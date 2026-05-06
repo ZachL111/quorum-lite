@@ -1,69 +1,40 @@
 # quorum-lite
 
-`quorum-lite` is a focused Go codebase around model quorum-backed rate limiting with lease expiry and local consensus traces. It is meant to be easy to inspect, run, and extend without a hosted service.
-
-## Quorum Lite Walkthrough
-
-I would read the project from the outside in: command, fixture, model, then roadmap. That keeps the distributed systems idea grounded in files that can be checked locally.
-
-## Capabilities
-
-- Includes extended examples for lease timing, including `recovery` and `degraded`.
-- Documents message ordering tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
-- Stores project constants and verification metadata in `metadata/project.json`.
-- Adds a repository audit script that checks structure before running the language verifier.
+`quorum-lite` keeps a focused Go implementation around distributed systems. The project goal is to model quorum-backed rate limiting with lease expiry and local consensus traces.
 
 ## Reason For The Project
 
-The repository exists to keep a technical idea small enough to reason about. The implementation avoids external dependencies where possible, then uses fixtures to make changes easy to review.
+This is intentionally local and self-contained so it can be inspected without credentials, services, or seeded history.
 
-## Where Things Live
+## Quorum Lite Review Notes
 
-- `policy`: Go package with the core model
-- `cmd`: small command entry point
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-- `go.mod`: Go module metadata
+Start with `lease drift` and `replica lag`. Those cases create the widest score spread in this repo, so they are the best quick check when the model changes.
+
+## What It Does
+
+- `fixtures/domain_review.csv` adds cases for quorum health and lease drift.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/quorum-lite-walkthrough.md` walks through the case spread.
+- The Go code includes a review path for `lease drift` and `replica lag`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
 ## How It Is Put Together
 
-The design is intentionally direct: parse or construct a signal, score it, classify it, and verify the expected branch. This makes the repository useful for studying distributed systems behavior without needing a service or database unless the language project itself is SQL. The Go layout uses small packages and table-oriented tests so the behavior stays easy to follow.
+The core code exposes a scoring path and the added review layer uses `signal`, `slack`, `drag`, and `confidence`. The domain terms are `quorum health`, `lease drift`, `replica lag`, and `membership churn`.
 
-## Command Examples
+The Go code keeps the review rule close to the tests.
+
+## Run It
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Check It
 
-## Data Notes
+That command is also the regression path. It verifies the domain cases and catches mismatches between the CSV, metadata, and code.
 
-The examples are meant to be readable before they are exhaustive. They cover enough variation to show how latency and risk can pull a decision below the threshold.
+## Boundaries
 
-## Check The Work
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
-
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Tradeoffs
-
-The scoring model is simple by design. More domain-specific behavior should be added through explicit adapters or extra fixture classes rather than hidden constants.
-
-## Possible Extensions
-
-- Add a comparison mode that shows how decisions change when one signal is adjusted.
-- Add a loader for `examples/extended_cases.csv` and promote selected cases into the language test suite.
-- Add a short report command that prints the score breakdown for a single scenario.
-- Add one more distributed systems fixture that focuses on a malformed or borderline input.
-
-## Getting It Running
-
-The only required setup is the local Go toolchain. After cloning, stay in the repo root so fixture paths resolve correctly.
+This remains a local project with deterministic fixtures. It does not depend on credentials, hosted services, or live data. Future work should add richer malformed inputs before widening the public API.

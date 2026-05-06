@@ -1,0 +1,73 @@
+{
+  "repo": "quorum-lite",
+  "language": "Go",
+  "category": "Distributed systems",
+  "goal": "Model quorum-backed rate limiting with lease expiry and local consensus traces.",
+  "review_model": {
+    "terms": [
+      "quorum health",
+      "lease drift",
+      "replica lag",
+      "membership churn"
+    ],
+    "lanes": [
+      "ship",
+      "watch",
+      "hold"
+    ],
+    "score": "signal * 2 + slack + confidence - drag * 3",
+    "purpose": "surface the domain-specific cases that need the most careful review"
+  },
+  "cases": [
+    {
+      "name": "baseline",
+      "focus": "quorum health",
+      "signal": 59,
+      "slack": 51,
+      "drag": 18,
+      "confidence": 85,
+      "score": 200,
+      "lane": "ship"
+    },
+    {
+      "name": "stress",
+      "focus": "lease drift",
+      "signal": 76,
+      "slack": 50,
+      "drag": 14,
+      "confidence": 92,
+      "score": 252,
+      "lane": "ship"
+    },
+    {
+      "name": "edge",
+      "focus": "replica lag",
+      "signal": 50,
+      "slack": 45,
+      "drag": 19,
+      "confidence": 56,
+      "score": 144,
+      "lane": "ship"
+    },
+    {
+      "name": "recovery",
+      "focus": "membership churn",
+      "signal": 85,
+      "slack": 32,
+      "drag": 25,
+      "confidence": 85,
+      "score": 212,
+      "lane": "ship"
+    },
+    {
+      "name": "stale",
+      "focus": "quorum health",
+      "signal": 71,
+      "slack": 42,
+      "drag": 9,
+      "confidence": 80,
+      "score": 237,
+      "lane": "ship"
+    }
+  ]
+}
